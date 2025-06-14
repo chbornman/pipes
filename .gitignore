@@ -29,3 +29,6 @@ public/wasm/
 
 # Emscripten cache
 .emscripten_cache/
+
+# Raylib
+lib/

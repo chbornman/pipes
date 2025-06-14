@@ -69,11 +69,16 @@ static const unsigned int pipe_colors[] = {
 
 EMSCRIPTEN_KEEPALIVE
 void init_pipes(int width, int height) {
+    // Validate dimensions
+    if (width <= 0 || height <= 0) return;
+    
     if (pipe_system) {
         // Free existing grid
         if (pipe_system->grid) {
-            for (int x = 0; x < width / GRID_SIZE; x++) {
-                for (int y = 0; y < height / GRID_SIZE; y++) {
+            int old_grid_width = pipe_system->width / GRID_SIZE + 1;
+            int old_grid_height = pipe_system->height / GRID_SIZE + 1;
+            for (int x = 0; x < old_grid_width; x++) {
+                for (int y = 0; y < old_grid_height; y++) {
                     free(pipe_system->grid[x][y]);
                 }
                 free(pipe_system->grid[x]);

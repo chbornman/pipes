@@ -1,5 +1,5 @@
 <script>
-  import Screensaver from './lib/Screensaver.svelte';
+  import ScreensaverRaylib from './lib/ScreensaverRaylib.svelte';
   
   let currentView = 'welcome';
 
@@ -23,8 +23,7 @@
 {:else}
   <div class="screensaver-container">
     <button class="back-button" on:click={goToWelcome}>Back</button>
-    <canvas id="pipes-canvas"></canvas>
-    <Screensaver />
+    <ScreensaverRaylib />
   </div>
 {/if}
 
@@ -89,11 +88,5 @@
 
   .back-button:hover {
     background-color: rgba(255, 255, 255, 0.3);
-  }
-
-  #pipes-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
   }
 </style>
