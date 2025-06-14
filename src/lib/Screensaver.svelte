@@ -1,11 +1,15 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
+  import Settings from './Settings.svelte';
   
   let canvas;
   let ctx;
   let wasmModule;
   let animationId;
   let initPipes, updatePipes, getFramebuffer, cleanupPipes;
+  let setFadeSpeed, setSpawnRate, setTurnProbability, setMaxPipes, setAnimationSpeed;
+  let showSettings = true;
+  let animationDelay = 1000 / 60; // Default 60 FPS
   
   onMount(async () => {
     // Load WASM module
@@ -22,6 +26,13 @@
       updatePipes = wasmModule.cwrap('update_pipes', null, []);
       getFramebuffer = wasmModule.cwrap('get_framebuffer', 'number', []);
       cleanupPipes = wasmModule.cwrap('cleanup_pipes', null, []);
+      
+      // Get parameter setters
+      setFadeSpeed = wasmModule.cwrap('set_fade_speed', null, ['number']);
+      setSpawnRate = wasmModule.cwrap('set_spawn_rate', null, ['number']);
+      setTurnProbability = wasmModule.cwrap('set_turn_probability', null, ['number']);
+      setMaxPipes = wasmModule.cwrap('set_max_pipes', null, ['number']);
+      setAnimationSpeed = wasmModule.cwrap('set_animation_speed', null, ['number']);
       
       // Set up canvas
       canvas = document.getElementById('pipes-canvas');
@@ -72,7 +83,17 @@
       ctx.putImageData(imageData, 0, 0);
     }
     
-    animationId = requestAnimationFrame(animate);
+    // Use setTimeout for custom FPS control
+    setTimeout(() => {
+      animationId = requestAnimationFrame(animate);
+    }, animationDelay);
+  }
+  
+  function updateAnimationSpeed(fps) {
+    animationDelay = 1000 / fps;
+    if (setAnimationSpeed) {
+      setAnimationSpeed(fps);
+    }
   }
   
   function handleResize() {
@@ -86,6 +107,39 @@
 
 <svelte:window on:resize={handleResize} />
 
+{#if showSettings && setFadeSpeed}
+  <Settings 
+    {setFadeSpeed}
+    {setSpawnRate}
+    {setTurnProbability}
+    {setMaxPipes}
+    setAnimationSpeed={updateAnimationSpeed}
+  />
+{/if}
+
+<button 
+  class="settings-toggle" 
+  on:click={() => showSettings = !showSettings}
+>
+  {showSettings ? 'Hide' : 'Show'} Settings
+</button>
+
 <style>
-  /* Styles are in App.svelte */
+  .settings-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 100;
+  }
+  
+  .settings-toggle:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
 </style>

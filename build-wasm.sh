@@ -13,7 +13,7 @@ mkdir -p src/wasm
 # Compile C to WASM
 emcc src/pipes.c \
   -o src/wasm/pipes.js \
-  -s EXPORTED_FUNCTIONS='["_init_pipes", "_update_pipes", "_get_framebuffer", "_cleanup_pipes", "_malloc", "_free"]' \
+  -s EXPORTED_FUNCTIONS='["_init_pipes", "_update_pipes", "_get_framebuffer", "_cleanup_pipes", "_malloc", "_free", "_set_fade_speed", "_set_spawn_rate", "_set_turn_probability", "_set_max_pipes", "_set_animation_speed"]' \
   -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap", "HEAP8", "HEAPU8", "HEAP16", "HEAPU16", "HEAP32", "HEAPU32", "HEAPF32", "HEAPF64"]' \
   -s MODULARIZE=1 \
   -s EXPORT_NAME='createPipesModule' \
